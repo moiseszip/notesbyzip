@@ -3,12 +3,11 @@ from tkinter import *
 from tkinter import filedialog, font, colorchooser
 from tkinter import ttk
 
-
 #set root as a Tk object
 root = tk.Tk()
 
-#set title and frame size
-root.title("Notes by Zip")
+#set title frame and size
+root.title("* - Notes by Zip")
 root.geometry("800x600")
 
 #set menu bar
@@ -105,4 +104,12 @@ root.bind('<Control-c>', copy)
 root.bind('<Control-x>', cut)
 root.bind('<Control-v>', paste)
 
+def updateTitle():
+    if filePath:
+        fileName = filePath.split("/")[-1]  # Get the base file name
+        root.title(f"{fileName} - Notes by Zip")
+    else:
+        root.title("* - Notes by Zip")
+
+updateTitle()
 root.mainloop()
