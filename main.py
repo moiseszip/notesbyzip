@@ -93,6 +93,9 @@ editMenu.add_command(label="Copy (Ctrl+C)", command=copy)
 editMenu.add_command(label="Cut (Ctrl+X)", command=cut)
 editMenu.add_command(label="Paste (Ctrl+V)", command=paste)
 
+#style buttons
+
+
 #binds
 root.bind("<Control-n>", newFile)
 root.bind("<Control-o>", openFile)
@@ -104,6 +107,7 @@ root.bind('<Control-c>', copy)
 root.bind('<Control-x>', cut)
 root.bind('<Control-v>', paste)
 
+#update title based on file's name
 def updateTitle():
     if filePath:
         fileName = filePath.split("/")[-1]  # Get the base file name
