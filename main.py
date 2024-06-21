@@ -7,7 +7,7 @@ from tkinter import ttk
 root = tk.Tk()
 
 #set title frame and size
-root.title("* - Notes by Zip")
+root.title("Untitled - Notes by Zip")
 root.geometry("800x600")
 
 #set menu bar
@@ -26,16 +26,18 @@ menuBar.add_cascade(label="Edit", menu=editMenu)
 textArea = tk.Text(root, undo=True, wrap="word")
 textArea.pack(expand=1, fill="both")
 
+#set file address to none
+filePath = None
+
 #file menu functions
 #from line 1 column 0 to END
 def newFile(event=None):
     textArea.delete(1.0, tk.END)
-
-#set file address to none
-filePath = None
+    updateTitle()
 
 #open .txt files
 def openFile(event=None):
+    global filePath
     filePath = filedialog.askopenfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
 
     #read file, clear textArea, then insert read file
@@ -44,24 +46,30 @@ def openFile(event=None):
             textArea.delete(1.0, tk.END)
             textArea.insert(tk.END, file.read())
 
-#save text in the same address
-def saveFile():
+    updateTitle()
 
+#save text in the same address
+def saveFile(event=None):
+    global filePath
     if filePath:
-        if filePath:
-            with open(filePath, "w") as file:
-                file.write(textArea.get(1.0, tk.END))
-        else:
-            saveAsFile()
+        with open(filePath, "w") as file:
+            file.write(textArea.get(1.0, tk.END))
+    else:
+        saveAsFile()
+
+    updateTitle()
 
 #save text as .txt (open file explorer)
 def saveAsFile(event=None):
+    global filePath
     filePath = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
 
     #write in file text from line 1, column 0 to END
     if filePath:
         with open(filePath, "w") as file:
             file.write(textArea.get(1.0, tk.END))
+
+    updateTitle()
 
 #exit
 def closeApp(event=None):
@@ -75,16 +83,16 @@ fileMenu.add_command(label="Save As (Ctrl+Shift+S)", command=saveAsFile)
 fileMenu.add_command(label="Exit (Ctrl+W)", command=closeApp)
 
 #edit menu functions
-def undo():
+def undo(event=None):
     textArea.edit_undo()
 
-def copy():
+def copy(event=None):
     textArea.event_generate("<<Copy>>")
 
-def cut():
+def cut(event=None):
     textArea.event_generate("<<Cut>>")
 
-def paste():
+def paste(event=None):
     textArea.event_generate("<<Paste>>")
 
 #set edit menu function labels
@@ -93,7 +101,49 @@ editMenu.add_command(label="Copy (Ctrl+C)", command=copy)
 editMenu.add_command(label="Cut (Ctrl+X)", command=cut)
 editMenu.add_command(label="Paste (Ctrl+V)", command=paste)
 
+#style functions
+def toggleBold(event=None):
+    currentStyle = textArea.tag_names("sel.first")
+    if "bold" in currentStyle:
+        textArea.tag_remove("bold", "sel.first", "sel.last")
+    else:
+        textArea.tag_add("bold", "sel.first", "sel.last")
+        boldFont = font.Font(textArea, textArea.cget("font"))
+        boldFont.configure(weight="bold")
+        textArea.tag_configure("bold", font=boldFont)
+
+def toggleUnderline(event=None):
+    currentStyle = textArea.tag_names("sel.first")
+    if "underline" in currentStyle:
+        textArea.tag_remove("underline", "sel.first", "sel.last")
+    else:
+        textArea.tag_add("underline", "sel.first", "sel.last")
+        underlineFont = font.Font(textArea, textArea.cget("font"))
+        underlineFont.configure(underline=True)
+        textArea.tag_configure("underline", font=underlineFont)
+
+def toggleItalic(event=None):
+    try:
+        currentStyle = textArea.tag_names("sel.first")
+        if "italic" in currentStyle:
+            textArea.tag_remove("italic", "sel.first", "sel.last")
+        else:
+            textArea.tag_add("italic", "sel.first", "sel.last")
+            italicFont = font.Font(textArea, textArea.cget("font"))
+            italicFont.configure(slant="italic")
+            textArea.tag_configure("italic", font=italicFont)
+    except tk.TclError:
+        pass
+
 #style buttons
+boldButton = tk.Menu(menuBar,tearoff=0)
+menuBar.add_command(label="B", command=toggleBold, font=("Helvetica", 12, "bold"))
+
+underlineButton = tk.Menu(menuBar, tearoff=0)
+menuBar.add_command(label="U", command=toggleUnderline, font=("Helvetica", 12, "underline"))
+
+italicButton = tk.Menu(menuBar, tearoff=0)
+menuBar.add_command(label="I", command=toggleItalic, font=("Helvetica", 12, "italic"))
 
 
 #binds
@@ -106,14 +156,16 @@ root.bind('<Control-z>', undo)
 root.bind('<Control-c>', copy)
 root.bind('<Control-x>', cut)
 root.bind('<Control-v>', paste)
+root.bind("<Control-b>", toggleBold)
 
 #update title based on file's name
 def updateTitle():
+    global filePath
     if filePath:
-        fileName = filePath.split("/")[-1]  # Get the base file name
+        fileName = filePath.split("/")[-1]
         root.title(f"{fileName} - Notes by Zip")
     else:
-        root.title("* - Notes by Zip")
+        root.title("Untitled - Notes by Zip")
 
 updateTitle()
 root.mainloop()
