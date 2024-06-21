@@ -135,16 +135,36 @@ def toggleItalic(event=None):
     except tk.TclError:
         pass
 
-#style buttons
-boldButton = tk.Menu(menuBar,tearoff=0)
-menuBar.add_command(label="B", command=toggleBold, font=("Helvetica", 12, "bold"))
+#testing style buttons on footer
+boldButton = ttk.Button(root, text="B", command=toggleBold, width=3)
+boldButton.pack(side="left")
 
-underlineButton = tk.Menu(menuBar, tearoff=0)
-menuBar.add_command(label="U", command=toggleUnderline, font=("Helvetica", 12, "underline"))
+underlineButton = ttk.Button(root, text="U", command=toggleUnderline, width=3)
+underlineButton.pack(side="left")
 
-italicButton = tk.Menu(menuBar, tearoff=0)
-menuBar.add_command(label="I", command=toggleItalic, font=("Helvetica", 12, "italic"))
+italicButton = ttk.Button(root, text="I", command=toggleItalic, width=3)
+italicButton.pack(side="left")
 
+#color picker
+def chooseFontColor():
+    global color
+    color = colorchooser.askcolor()[1]
+    if color:
+        textArea.tag_add("font_color", "sel.first", "sel.last")
+        textArea.tag_configure("font_color", foreground=color)
+
+def chooseBgColor():
+    global color
+    color = colorchooser.askcolor()[1]
+    if color:
+        textArea.tag_add("background_color", "sel.first", "sel.last")
+        textArea.tag_configure("background_color", background=color)
+
+fontColorButton = ttk.Button(root, text="Font Color", command=chooseFontColor)
+fontColorButton.pack(side="left")
+
+bgColorButton = ttk.Button(root, text="BG Color", command=chooseBgColor)
+bgColorButton.pack(side="left")
 
 #binds
 root.bind("<Control-n>", newFile)
