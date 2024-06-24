@@ -166,6 +166,24 @@ fontColorButton.pack(side="left")
 bgColorButton = ttk.Button(root, text="BG Color", command=chooseBgColor)
 bgColorButton.pack(side="left")
 
+#font sel
+fontFamilies = list(font.families())
+
+fontVar = tk.StringVar(value=fontFamilies[0])
+fontMenu = ttk.Combobox(root, textvariable=fontVar, values=fontFamilies, state="readonly")
+fontMenu.pack(side="left")
+
+fontSize = tk.IntVar(value=12)
+fontSizeMenu = ttk.Combobox(root, textvariable=fontSize, values=list(range(8, 73, 2)), state="readonly")
+fontSizeMenu.pack(side="left")
+
+def setFont(event=None):
+    currentFont = (fontVar.get(), fontSize.get())
+    textArea.config(font=currentFont)
+
+fontMenu.bind("<<ComboboxSelected>>", setFont)
+fontSizeMenu.bind("<<ComboboxSelected>>", setFont)
+
 #binds
 root.bind("<Control-n>", newFile)
 root.bind("<Control-o>", openFile)
