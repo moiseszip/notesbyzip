@@ -16,6 +16,10 @@ Custom noteblock with font selector, styling and colors <br/>
 - Python
 - Tkinter
 
+## 💻 Project
+
+[Download v1.0.0](https://github.com/moiseszip/notesbyzip/releases)
+
 ## 📃 License
 
 This project is under MIT license.
